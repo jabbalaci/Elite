@@ -34,6 +34,8 @@ Print the name of a random planet:
     ...
     print random.choice(galaxy.planets)
 
+-----
+
 * Laszlo Szathmary (<jabba.laci@gmail.com>)
 * Homepage: <http://pythonadventures.wordpress.com/2012/03/06/elite-planet-name-generator/>
 
