@@ -18,8 +18,8 @@ and for jumping to the next galaxy (j).
 I made a simple wrapper script too called elite.py. If you want to get
 the name of a random planet, use elite.py. 
 
-Example:
---------
+Examples:
+---------
 
 Print the planet names in Galaxy 1:
 
@@ -34,4 +34,6 @@ Print the name of a random planet:
     ...
     print random.choice(galaxy.planets)
 
-Laszlo Szathmary (<jabba.laci@gmail.com>)
+* Laszlo Szathmary (<jabba.laci@gmail.com>)
+* Homepage: <http://pythonadventures.wordpress.com/2012/03/06/elite-planet-name-generator/>
+
