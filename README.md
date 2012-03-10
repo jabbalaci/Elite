@@ -1,7 +1,7 @@
 Elite Planet Name Generator
 ===========================
 
-I found the original pytxtelite at
+I found the original pytxtelite (written by Ian Sparks) at
 <http://automaticromantic.com/static/misc/pytxtelite.txt>.
 You can find a copy of the original script in the "pytxtelite" folder.
 
