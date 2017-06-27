@@ -39,3 +39,13 @@ Print the name of a random planet:
 * Laszlo Szathmary (<jabba.laci@gmail.com>)
 * Homepage: <http://pythonadventures.wordpress.com/2012/03/06/elite-planet-name-generator/>
 
+Rest API:
+--------
+
+Added by me ;) (Richard Hannah - richard.hannah1974@gmail.com)
+
+python elitePlanetApi.py
+
+Navigate to http://localhost:5000/planet
+
+Marvel at a planet name brought to you in full monochrome browser-o-vision!!
