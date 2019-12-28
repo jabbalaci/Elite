@@ -16,7 +16,7 @@ It also has a simple command-line interface for printing planet names (n)
 and for jumping to the next galaxy (j).
 
 I made a simple wrapper script too called elite.py. If you want to get
-the name of a random planet, use elite.py. 
+the name of a random planet, use elite.py.
 
 Examples:
 ---------
@@ -26,16 +26,15 @@ Print the planet names in Galaxy 1:
     import pyplanets
 
     galaxy = pyplanets.Galaxy()
-    print galaxy.planets
+    print(galaxy.planets)
 
 Print the name of a random planet:
 
     import random
     ...
-    print random.choice(galaxy.planets)
+    print(random.choice(galaxy.planets))
 
 -----
 
 * Laszlo Szathmary (<jabba.laci@gmail.com>)
 * Homepage: <http://pythonadventures.wordpress.com/2012/03/06/elite-planet-name-generator/>
-
