@@ -1,7 +1,7 @@
 #!/usr/bin/python
 VERSION = '1.0'
 #
-# Elite trading 
+# Elite trading
 #
 # Conversion of Ian Bell's txtelite.c 1.2 (and parts of 1.4)
 # to python (2.5, maybe earlier)
@@ -19,7 +19,7 @@ VERSION = '1.0'
 ##
 ## Textual version of Elite trading (C implementation)
 ## Converted by Ian Bell from 6502 Elite sources.
-## Original 6502 Elite by Ian Bell & David Braben. 
+## Original 6502 Elite by Ian Bell & David Braben.
 ##
 ##   The nature of basic mechanisms used to generate the Elite socio-economic
 ## universe are now widely known. A competant games programmer should be able to
@@ -68,21 +68,21 @@ lastrand = 12345-1
 def sas_crand():
     #As supplied by D McDonnell	from SAS Insititute C
     global lastrand
-    
+
     r = (((((((((((lastrand << 3) - lastrand) << 3) \
          + lastrand) << 1) + lastrand) << 4) \
          - lastrand) << 1) - lastrand) + 0xe60)
-    
+
     r = r & 0x7fffffff
-        
-    lastrand = r - 1	
-    return r 
+
+    lastrand = r - 1
+    return r
 
 #Make your choice of random number generator
 crand = sas_crand #lcc_crand
 
 pairs0  = "ABOUSEITILETSTONLONUTHNO"
-pairs = "..LEXEGEZACEBISOUSESARMAINDIREA.ERATENBERALAVETIEDORQUANTEISRION"                    
+pairs = "..LEXEGEZACEBISOUSESARMAINDIREA.ERATENBERALAVETIEDORQUANTEISRION"
 pairs1 = pairs0 + pairs
 
 def size16Num(value):
@@ -97,7 +97,7 @@ def char(value):
     value = value & 255
     if value > 127:
         return value - 256
-    return value         
+    return value
 
 def rotate1(x):
     """Rotate 8 bit number leftwards"""
@@ -122,12 +122,12 @@ class PlanSys:
         self.name = ''
         self.goatsoupseed = [0,0,0,0]
         self.gs = None #A goat soup number
-        
+
         #Original game has fuelcost as a constant.
         #I'm choosing to make it a system property so you
-        #could vary it if you wanted to (maybe by tech level?) 
+        #could vary it if you wanted to (maybe by tech level?)
         self.fuelcost = 0.2 #0.2 CR/light year.
-        
+
     def nameStartsWith(self,name):
         """Does this planetary system name start with <name>?"""
         return self.name.lower().startswith(name.strip().lower())
@@ -138,7 +138,7 @@ class PlanSys:
         return ["Rich Ind","Average Ind","Poor Ind","Mainly Ind",
                       "Mainly Agri","Rich Agri","Average Agri","Poor Agri"][self.economy]
 
-        
+
     def governmentDescription(self):
         """Return a description of this government type"""
         return ["Anarchy","Feudal","Multi-gov","Dictatorship",
@@ -156,22 +156,22 @@ class PlanSys:
             a = a + 1
         self.gs[0] = a & 0xFF
         self.gs[2] = x
-    
+
         a = a / 256 # a = any carry left from above
         x = self.gs[1]
         a = (a + x + self.gs[3]) & 0xFF
         self.gs[1] = a
         self.gs[3] = x
-        return a 
+        return a
 
 
     def goatsoup(self,source):
         """Return the famous goatsoup string describing the planet"""
         ## Ian Bell: "Goat Soup" planetary description string code -
         ##           adapted from Christian Pinder's
-        ##           reverse engineered sources.         
-        
-        desc_list = {   
+        ##           reverse engineered sources.
+
+        desc_list = {
           "\x81":["fabled", "notable", "well known", "famous", "noted"],
           "\x82":["very", "mildly", "most", "reasonably", ""],
           "\x83":["ancient", "\x95", "great", "vast", "pink"],
@@ -209,7 +209,7 @@ class PlanSys:
           "\xA3":["ice", "mud", "Zero-G", "vacuum", "\xB1 ultra"],
           "\xA4":["hockey", "cricket", "karate", "polo", "tennis"]
         }
-                                 
+
         index = -1
         out = []
         while True:
@@ -230,7 +230,7 @@ class PlanSys:
                 if oc <= 164:
                     rnd = self.gen_rnd_number()
                     num = oc
-                    
+
                     pos =  0
                     if rnd >= 51:
                         pos += 1
@@ -243,12 +243,12 @@ class PlanSys:
                     res = self.goatsoup(desc_list[chr(num)][pos])
                     out.append(res)
                     continue
-            
+
             if c == "\xB0":
                 #Planet name, leading capital, rest lower
                 out.append(self.name[0] + self.name.lower()[1:])
                 continue
-            
+
             if c == "\xB1":
                 #planet-name +"ian"
                 out.append(self.name[0])
@@ -257,7 +257,7 @@ class PlanSys:
                     out.append(self.name[-1].lower())
                 out.append('ian')
                 continue
-            
+
             if c == "\xB2":
                 #Random name. Bug in this area, probably related to way
                 #C allows overrun between character arrays. The numbers
@@ -271,12 +271,12 @@ class PlanSys:
                     if i and pairs1[x] !='.':
                         out.append(pairs1[x])
                 continue
-                          
-            #There are (were?) some forward references that are not complete.      
+
+            #There are (were?) some forward references that are not complete.
             out.append('<bad char in data [%X]>' % oc)
             continue
 
-            
+
         return ''.join(out)
 
     def print_system(self, short_version):
@@ -284,7 +284,7 @@ class PlanSys:
         if short_version:
             fmt = "%10s TL: %2i %12s %15s"
             val = fmt % (self.name,self.techlev+1,self.economyDescription(),self.governmentDescription(),)
-            print val, 
+            print val,
         else:
             print "\nSystem: %s" % (self.name,)
             print "Position (%d,%d)" % (self.x,self.y,)
@@ -297,26 +297,26 @@ class PlanSys:
             self.gs = self.goatsoupseed[:]
             print "%s" % (self.goatsoup("\x8F is \x97."),)
 
-        
+
 class Seed:
     """A pseudo-random number holder based on 16 bit numbers."""
     def __init__(self):
         self.w0 = 0
         self.w1 = 0
         self.w2 = 0
-        
+
     def shuffle(self):
         """Pseudo Randomize a seed"""
         temp = size16Num(self.w0 + self.w1 + self.w2)
         self.w0 = self.w1
         self.w1 = self.w2
-        self.w2 = temp        
+        self.w2 = temp
 
 
 class Galaxy:
     def __init__(self):
         """A galaxy.
-        
+
            In the original game all system data was generated from the initial
            seed value for galaxy one. If you want a later galaxy you have to
            advance through to get it.
@@ -326,12 +326,12 @@ class Galaxy:
         self.seed = Seed()
         self.setGalaxyOne()
         self.makeSystems()
-          
+
     def makeSystems(self):
         """Populate all the systems"""
         self.systems = []
 
-        #Populate the 256 planetary systems in each galaxy 
+        #Populate the 256 planetary systems in each galaxy
         for i in xrange(256):
             self.systems.append(self.makesystem(i))
 
@@ -340,13 +340,13 @@ class Galaxy:
         """Goto galaxy X, Galaxy 9 == Galaxy 1"""
         self.setGalaxyOne()
 
-        #Advance to further galaxies if need-be.  
+        #Advance to further galaxies if need-be.
         for i in xrange(2,galnum+1):
             self.nextgalaxy()
-        
+
         self.galaxy_number = galnum % 8
-        self.makeSystems() 
-          
+        self.makeSystems()
+
     def setGalaxyOne(self):
         """Set base seed for galaxy 1"""
         self.seed.w0=0x5A4A
@@ -358,57 +358,57 @@ class Galaxy:
     def nextgalaxy(self, make_planets=True):
         """Apply to galaxy1 seed once for galaxy 2, twice for galaxy 3 etc
            Eighth application gives galaxy 1 again"""
-        ss = self.seed 
+        ss = self.seed
         ss.w0 = twist(ss.w0)
         ss.w1 = twist(ss.w1)
         ss.w2 = twist(ss.w2)
-        
+
     def makesystem(self, system_number):
         """Make a planetary system"""
         s = self.seed
-        
+
         thissys = PlanSys()
         thissys.num = system_number
         thissys.x = s.w1 >> 8
         thissys.y = s.w0 >> 8
         longnameflag = s.w0 & 64
-    
-        thissys.govtype =(((s.w1)>>3)&7) # bits 3,4 &5 of w1 
-        thissys.economy =(((s.w0)>>8)&7) # bits 8,9 &A of w0 
+
+        thissys.govtype =(((s.w1)>>3)&7) # bits 3,4 &5 of w1
+        thissys.economy =(((s.w0)>>8)&7) # bits 8,9 &A of w0
         if thissys.govtype <= 1:
             thissys.economy = thissys.economy | 2
         thissys.techlev =((s.w1>>8)&3)+(thissys.economy^7)
         thissys.techlev += thissys.govtype >> 1
         if (thissys.govtype & 1) == 1:
             thissys.techlev +=1
-    
-    
-    
+
+
+
         thissys.population = 4*(thissys.techlev) + (thissys.economy)
         thissys.population =  thissys.population + (thissys.govtype) + 1
         thissys.productivity = (((thissys.economy)^7)+3)*((thissys.govtype)+4)
         thissys.productivity = thissys.productivity * (thissys.population)*8
-    
+
         thissys.radius = (256*((((s.w2)>>8)&15)+11)) + thissys.x
-    
-    
+
+
         thissys.goatsoupseed[0] = s.w1 & 0xFF
         thissys.goatsoupseed[1] = s.w1 >> 8
         thissys.goatsoupseed[2] = s.w2 & 0xFF
         thissys.goatsoupseed[3] = s.w2 >> 8
-                
+
         pair1=2*(((s.w2)>>8)&31)
         s.shuffle()
         pair2=2*(((s.w2)>>8)&31)
         s.shuffle()
-    
+
         pair3=2*(((s.w2)>>8)&31)
         s.shuffle()
-    
-    
+
+
         pair4=2*(((s.w2)>>8)&31)
         s.shuffle()
-    
+
         # Always four iterations of random number
         name = []
         name.append(pairs[pair1])
@@ -417,19 +417,19 @@ class Galaxy:
         name.append(pairs[pair2+1])
         name.append(pairs[pair3])
         name.append(pairs[pair3+1])
-    
+
         if longnameflag: #* bit 6 of ORIGINAL w0 flags a four-pair name
             name.append(pairs[pair4])
             name.append(pairs[pair4+1])
-        thissys.name = "".join(name).replace('.','')    
+        thissys.name = "".join(name).replace('.','')
         return thissys
 
     def distance(self, a, b):
         """Calculate distance between two planetary systems in 2 dimensional space (4*sqrt(X*X+Y*Y/4))"""
         from math import pow, sqrt
         return int(4.0*sqrt(pow(a.x-b.x,2)+pow(a.y-b.y,2)/4.0))
-    
-    
+
+
     def closest_system_like(self, currentsys, name):
         """Find the closest system who's name starts with <name>"""
         d = 9999
@@ -440,9 +440,9 @@ class Galaxy:
                 if dist < d:
                     d = dist
                     ret_system = planet_sys
-            
+
         return ret_system
-    
+
     def systemsWithin(self, currentsys, max_ly_distance):
         """Find all the planets within X Light years
            Returns a list of tuples [(distance,system),...]
@@ -453,8 +453,8 @@ class Galaxy:
             if dist <= max_ly_distance:
                 found.append((dist,planet_sys))
         return found
-  
-    
+
+
 
 class Unit:
     def __init__(self,name):
@@ -506,7 +506,7 @@ class Market:
     def __init__(self):
         self.goods = {}
         for commodity in commodities:
-            self.goods[commodity.name] = MarketGood() 
+            self.goods[commodity.name] = MarketGood()
 
 class Ship:
     """A ship (by default a Cobra MkIII)"""
@@ -514,16 +514,16 @@ class Ship:
         self.holdsize = 20 #Small cargo hold
         self.cargo = {} #Dict of items carried
         for commodity in commodities:
-            self.cargo[commodity.name] = 0 
+            self.cargo[commodity.name] = 0
         self.cash = 100.0
         self.maxfuel = self.fuel = 70 #70 tonnes/7 light years
         self.galaxynum = 1
         self.planetnum = 7 #Lave
-        
+
     def cargosize(self):
         """Return current size of cargo in tonnes"""
         return sum([self.cargo[commodity.name] for commodity in commodities if commodity.unit == tonnes])
-    
+
     def holdRemaining(self):
         """Return how much space remains in the hold"""
         return self.holdsize - self.cargosize()
@@ -535,15 +535,15 @@ class TradingGame:
         self.galaxy = Galaxy()
         self.localmarket = Market()
         self.genmarket(0) #Since we want seed=0 for Lave
-    
+
     def currentSystem(self):
         """Get the players current system"""
         return self.galaxy.systems[self.ship.planetnum]
-    
+
     def moveto(self, planet_sys):
         """Move player to this system"""
         self.ship.planetnum = planet_sys.num
-    
+
 
     def genmarket(self, fluct):
         """Generate market for current system"""
@@ -563,27 +563,27 @@ class TradingGame:
         # */
 
         cs = self.currentSystem()
-        
+
         for commodity in commodities:
             good = self.localmarket.goods[commodity.name]
             product = cs.economy * commodity.gradient
             changing = fluct & commodity.mask
             q = commodity.basequant + changing - product
             q = q & 0xFF
-            
+
             #Clip to positive 8-bit
             if q & 0x80:
                 q = 0
-            good.quantity = q & 0x3F    
-           
-                         
-            #Now work out price   
+            good.quantity = q & 0x3F
+
+
+            #Now work out price
             q =  commodity.baseprice + changing + product
             q = q & 0xFF
             good.price = (q*4) / 10.0
-        
+
         self.localmarket.goods['Alien Items '].quantity = 0
-        
+
     def jump(self, planetname):
         """Jump to named planet in range, uses fuel"""
         dest = self.galaxy.closest_system_like(self.currentSystem(),planetname)
@@ -595,26 +595,26 @@ class TradingGame:
         if dest.name == self.currentSystem().name:
             print "Bad jump!"
             return
-                        
+
         distance = self.galaxy.distance(self.currentSystem(),dest)
         if distance > self.ship.fuel:
             print "Jump too far"
             return
-    
-        self.ship.fuel = self.ship.fuel-distance 
+
+        self.ship.fuel = self.ship.fuel-distance
         self.moveto(dest)
-        
+
         #Recalculate market prices
         r = crand()
-        fluct = char(r & 0xFF)      
+        fluct = char(r & 0xFF)
         self.genmarket(fluct)
-                
+
     def sneak(self, planetname):
         """Travel to any planet in this galaxy, no fuel cost"""
         fuelsafe = self.ship.fuel
         self.ship.fuel = 666
         self.jump(planetname)
-        self.ship.fuel = fuelsafe 
+        self.ship.fuel = fuelsafe
 
     def setHold(self, newsize):
         """Set new size of hold (tonnes)"""
@@ -623,7 +623,7 @@ class TradingGame:
         if sm > newsize:
             print "Hold too full to shrink!"
             return
-        
+
         self.ship.holdsize = newsize
 
     def nextGalaxy(self):
@@ -637,7 +637,7 @@ class TradingGame:
         for commodity in commodities:
             lcl = self.localmarket.goods[commodity.name]
             current = self.ship.cargo[commodity.name]
-            
+
             print commodity.name,
             print "   %4.1f   %2d%s Hold: %4d " % (lcl.price,lcl.quantity,commodity.unit.name.ljust(2),current)
 
@@ -648,31 +648,31 @@ class TradingGame:
         if cargo <= 0:
             print "No %s to sell." % (commod.name.strip(),)
             return
-        
+
         if amt > cargo:
             print "Only have %d%s to sell. Selling %d%s" % (cargo,commod.unit.name,cargo,commod.unit.name,)
             amt = cargo
-        
+
         local_market = self.localmarket.goods[commod.name]
-        price = amt * local_market.price       
-        print "Selling %d%s of %s for %0.2f" % (amt,commod.unit.name,commod.name.strip(),price,) 
+        price = amt * local_market.price
+        print "Selling %d%s of %s for %0.2f" % (amt,commod.unit.name,commod.name.strip(),price,)
         self.ship.cash = self.ship.cash + price
         self.ship.cargo[commod.name] -= amt
-        local_market.quantity += amt 
+        local_market.quantity += amt
 
     def buy(self, commod, amt):
         """Buy amt of commodity"""
-        
+
         local_market = self.localmarket.goods[commod.name]
         lcl_amount = local_market.quantity
         if lcl_amount == 0:
             print "Could not buy any %s" % commod.name
             return
-        
+
         if amt > lcl_amount:
-            print "Could not buy %d%s attempting to buy maximum %d%s instead." % (amt,commod.unit.name,lcl_amount,commod.unit.name,) 
+            print "Could not buy %d%s attempting to buy maximum %d%s instead." % (amt,commod.unit.name,lcl_amount,commod.unit.name,)
             amt = lcl_amount
-  
+
         #How many can I afford?
         if local_market.price <= 0:
             can_have = amt
@@ -684,40 +684,40 @@ class TradingGame:
 
         if amt > can_have:
             amt = can_have
-            
+
         #How much will fit in the hold?
         if commod.unit == tonnes:
             if self.ship.holdRemaining() < amt:
-                can_have = self.ship.holdRemaining() 
+                can_have = self.ship.holdRemaining()
                 if can_have <= 0:
                     print "No room in hold for any %s" % commod.name
                     return
                 else:
-                    
+
                     print "Could not fit %d%s into the hold. Reducing to %d%s" % (amt,commodity.unit.name,can_have,commodity.unit.name,)
                     amt = can_have
-                 
-            
-        price = amt * local_market.price       
-        print "Buying %d%s of %s for %0.2f" % (amt,commod.unit.name,commod.name.strip(),price,) 
+
+
+        price = amt * local_market.price
+        print "Buying %d%s of %s for %0.2f" % (amt,commod.unit.name,commod.name.strip(),price,)
         self.ship.cash = self.ship.cash - price
         self.ship.cargo[commod.name] += amt
         local_market.quantity -= amt
-        
+
     def buyFuel(self, f):
         """Buy f tonnes of fuel return fuel bought and cost"""
         if f + self.ship.fuel > self.ship.maxfuel:
             f = self.ship.maxfuel - self.ship.fuel
-            
+
         if f <= 0:
             print "Your fuel tank is full (%0.2f tonnes / %0.1f LY Range)" % (self.ship.fuel,self.ship.fuel/10.0,)
             return 0, 0
-        
+
         #Find out what system we're at because fuelcost is there.
         this_sys = self.currentSystem()
 
         cost = this_sys.fuelcost * f
-        
+
         if self.ship.cash > 0:
             if cost > self.ship.cash:
                 f = self.ship.cash / this_sys.fuelcost
@@ -725,40 +725,40 @@ class TradingGame:
         else:
             print "You can't afford any fuel"
             return 0, 0
-        
+
         self.ship.fuel = self.ship.fuel + f
         self.ship.cash = self.ship.cash - cost
         return f, cost
-        
-        
-import cmd 
+
+
+import cmd
 
 class TradingGameCmd(cmd.Cmd):
     """Command interface to a TradingGame"""
     prompt = "> "
- 
+
     def __init__(self):
         self.game = TradingGame()
         cmd.Cmd.__init__(self)
         self.setPrompt()
-  
+
     def setPrompt(self):
         self.prompt = 'Cash : %0.2f>' % self.game.ship.cash
-  
+
     def emptyline(self):
         """Do nothing on an empty line"""
         pass
-        
+
     def do_jump(self, planetname):
         """jump <planetname> - Jump to named planet in range, uses fuel"""
         ret = self.game.jump(planetname.strip())
         self.do_info('')
         return ret
-                
+
     def do_j(self, planetname):
       """Shortcut for jump"""
       return self.do_jump(planetname)
-                
+
     def do_sneak(self, planetname):
         """sneak <planetname> - Travel to any planet in this galaxy, no fuel cost"""
         return self.game.sneak(planetname.strip())
@@ -775,8 +775,8 @@ class TradingGameCmd(cmd.Cmd):
                 print " - ", #Refuel to get here
             planet_sys.print_system(True)
             print "(%.1f LY)" % (distance/10.0,)
-        
-                
+
+
     def do_hold(self, newsize):
         """hold <number> - Set a new (integer) hold size"""
         try:
@@ -784,11 +784,11 @@ class TradingGameCmd(cmd.Cmd):
         except ValueError:
             print "New hold size must be an integer"
             return
-        
+
         if ns <= 0:
             print "Why would you want to do that?"
             return
-      
+
         ret = self.game.setHold(ns)
         print "Cargo hold is currently %d tonnes." % self.game.ship.holdsize
         return ret
@@ -814,7 +814,7 @@ class TradingGameCmd(cmd.Cmd):
         except IndexError:
             print "Unknown trade good"
             return
-        
+
         try:
             amt = int(parts[1])
             if amt <= 0:
@@ -826,21 +826,21 @@ class TradingGameCmd(cmd.Cmd):
         except ValueError:
             print "Unknown quantity"
             return
-        
+
         commod = None
         for commodity in commodities:
             if commodity.name.lower().startswith(good):
                 commod = commodity
                 break
-        
+
         if not commod:
             print "Unknown trade good"
-            return        
-        
+            return
+
         res = self.game.sell(commod,amt)
         self.setPrompt()
         return res
- 
+
     def do_s(self, line):
       "Shortcut for Sell"
       return self.do_sell(line)
@@ -853,7 +853,7 @@ class TradingGameCmd(cmd.Cmd):
         except IndexError:
             print "Unknown trade good"
             return
-        
+
         try:
             amt = int(parts[1])
             if amt <= 0:
@@ -864,17 +864,17 @@ class TradingGameCmd(cmd.Cmd):
         except ValueError:
             print "Unknown quantity"
             return
-        
+
         commod = None
         for commodity in commodities:
             if commodity.name.lower().startswith(good):
                 commod = commodity
                 break
-        
+
         if not commod:
             print "Unknown trade good"
             return
-        
+
         ret = self.game.buy(commod,amt)
         self.setPrompt()
         return ret
@@ -883,7 +883,7 @@ class TradingGameCmd(cmd.Cmd):
       "Shortcut for buy"
       return self.do_buy(line)
 
-        
+
     def do_cash(self, amount):
         """cash <number> - Cheat, add X cash (cheating)"""
         try:
@@ -891,40 +891,40 @@ class TradingGameCmd(cmd.Cmd):
         except ValueError:
             print "New cash to add must be a number"
             return
-        
+
         self.game.ship.cash = self.game.ship.cash + cash
         self.setPrompt()
-          
+
     def do_fuel(self, line):
         """fuel <number> - Buy X LY of Fuel"""
         try:
             ly = float(line)
         except ValueError:
             print "Fuel LY to buy must be a number"
-            return 0, 0 
-      
+            return 0, 0
+
         if ly < 0:
             print "Nice try pilot."
             return 0, 0
-      
+
         fuel, cost = self.game.buyFuel(ly*10)
         self.setPrompt()
         print "Refuelling %0.1f LY (%0.2f tonnes) cost %0.2f credits" % (fuel/10.0,fuel,cost,)
         return
-     
+
     def do_f(self, line):
         """Shortcut for fuel"""
         return self.do_fuel(line)
-                   
+
     def do_info(self, systemname):
         """Get information on the named system"""
-        
+
         psystem = self.game.galaxy.closest_system_like(self.game.currentSystem(),systemname)
         if psystem == None:
             print "System '%s' could not be found." % (systemname,)
         else:
             psystem.print_system(False)
-                        
+
     def do_quit(self, line):
         """Quit the game"""
         print "Goodbye!"
@@ -940,7 +940,7 @@ class TradingGameCmd(cmd.Cmd):
 
     def do_EOF(self, line):
         return True
-    
+
     def do_run(self, fname):
         """run <path to file> - Run a set of commands recorded one per line in a text file"""
         import os
@@ -949,7 +949,7 @@ class TradingGameCmd(cmd.Cmd):
             for line in lines:
                 print line
                 self.onecmd(line)
-                print "Cash > ",self.game.ship.cash                
+                print "Cash > ",self.game.ship.cash
         else:
             print "Could not open file"
 
@@ -983,4 +983,3 @@ if __name__ == "__main__":
     tg = TradingGameCmd()
     tg.do_intro('')
     tg.cmdloop()
-

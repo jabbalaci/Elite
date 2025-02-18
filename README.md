@@ -40,14 +40,6 @@ Author
 * Laszlo Szathmary (<jabba.laci@gmail.com>)
 * Homepage: <http://pythonadventures.wordpress.com/2012/03/06/elite-planet-name-generator/>
 
-Rest API
---------
-
-This part was added by Richard Hannah (<richard.hannah1974@gmail.com>).
-
-    python elitePlanetApi.py
-
-Then navigate to <http://localhost:5000/planet>.
 
 Links
 -----
